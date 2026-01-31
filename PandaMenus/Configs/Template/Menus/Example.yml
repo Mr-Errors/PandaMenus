@@ -1,5 +1,6 @@
 # Example PandaMenus Configuration
-Example:
+Menu:
+  id: example
   title: "&8Example Menu"
   shape:
     - '---------'
@@ -17,5 +18,5 @@ Example:
       name: "&6Example Category"
       lore:
         - "&7Click to open example category"
-      actions: []
-
+      actions:
+      - "[OPEN_CATEGORY] example-category"
