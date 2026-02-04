@@ -1,17 +1,31 @@
 # PandaMenus
-PandaMenus is a minecraft skript which allows you to create a custom menu to how ever you wish. There are limitations currently like you can not do placeholders as of right now, try to think of it of as a quicker deluxemenus with a built in pagination system. 
 
+PandaMenus is a Minecraft Skript plugin that enables server administrators to create fully customizable menus tailored to their specific needs. While there are currently some limitations—such as the absence of placeholder support—PandaMenus can be thought of as a streamlined alternative to DeluxeMenus, featuring a built-in pagination system for enhanced navigation and user experience.
 
-# [Requirements]
-- Skript v2.13.2
-- Skbee v3.15.0
-- Oopsk v1.0-beta2
-- Skript-gui v1.3.1
-- Skript-reflect v2.6.1
-- Skript-yaml v1.7.2
-  
-# [OPTIONAL Requirements]
-- Skript-itemadder v1.6.1 - If you want to wish to use ItemsAdder items
-- MythicMobs v5.11.1-de409cac - If you want to wish to use MythicMobs items
-- Nexo - If you want to wish to use Nexo items
-- Oraxen - If you want to wish to use Oraxen items
+## Requirements
+
+The following dependencies are required for PandaMenus to function properly:
+
+- **Skript** v2.13.2
+- **SkBee** v3.15.0
+- **Oopsk** v1.0-beta2
+- **Skript-gui** v1.3.1
+- **Skript-reflect** v2.6.1
+- **Skript-yaml** v1.7.2
+
+## Optional Requirements
+
+The following addons are optional and only needed if you wish to integrate custom item providers:
+
+- **Skript-itemadder** v1.6.1 - For ItemsAdder item support
+- **MythicMobs** v5.11.1-de409cac - For MythicMobs item support
+- **Nexo** - For Nexo item support
+- **Oraxen** - For Oraxen item support
+
+## Getting Started
+
+[You may want to add installation instructions, usage examples, or a link to documentation here]
+
+## Support
+
+[Consider adding information about where users can get help or report issues]
