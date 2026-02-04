@@ -22,3 +22,54 @@
 #██║██║░╚═╝░██║██║░░░░░╚█████╔╝██║░░██║░░░██║░░░██████╔╝#
 #╚═╝╚═╝░░░░░╚═╝╚═╝░░░░░░╚════╝░╚═╝░░╚═╝░░░╚═╝░░░╚═════╝░#
 #-------------------------------------------------------#
+import:
+	java.io.File
+
+#-------------------------------------------------------------------------------------------------------------------------------#  
+#░█████╗░░█████╗░███╗░░██╗███████╗██╗░██████╗░░░░░██╗██╗░░░██╗░█████╗░███╗░░░███╗██╗░░░░░░░░░██╗██╗░░░░░░█████╗░░█████╗░██████╗░#
+#██╔══██╗██╔══██╗████╗░██║██╔════╝██║██╔════╝░░░░██╔╝╚██╗░██╔╝██╔══██╗████╗░████║██║░░░░░░░░██╔╝██║░░░░░██╔══██╗██╔══██╗██╔══██╗#
+#██║░░╚═╝██║░░██║██╔██╗██║█████╗░░██║██║░░██╗░░░██╔╝░░╚████╔╝░███████║██╔████╔██║██║░░░░░░░██╔╝░██║░░░░░██║░░██║███████║██║░░██║#
+#██║░░██╗██║░░██║██║╚████║██╔══╝░░██║██║░░╚██╗░██╔╝░░░░╚██╔╝░░██╔══██║██║╚██╔╝██║██║░░░░░░██╔╝░░██║░░░░░██║░░██║██╔══██║██║░░██║#
+#╚█████╔╝╚█████╔╝██║░╚███║██║░░░░░██║╚██████╔╝██╔╝░░░░░░██║░░░██║░░██║██║░╚═╝░██║███████╗██╔╝░░░███████╗╚█████╔╝██║░░██║██████╔╝#
+#░╚════╝░░╚════╝░╚═╝░░╚══╝╚═╝░░░░░╚═╝░╚═════╝░╚═╝░░░░░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░░░░╚═╝╚══════╝╚═╝░░░░╚══════╝░╚════╝░╚═╝░░╚═╝╚═════╝░#
+#-------------------------------------------------------------------------------------------------------------------------------#
+on load:
+	if new File("plugins/PandaMenus/config.yml").exists() is false:
+		download file from "https://raw.githubusercontent.com/Mr-Errors/PandaMenus/refs/heads/main/PandaMenus/Configs/Template/config.yml" and store it inside "plugins/PandaMenus/config.yml"
+		wait 2 ticks
+		load yaml "plugins/PandaMenus/config.yml" as "plugins/PandaMenus/config.yml"
+		save yaml "plugins/PandaMenus/config.yml"
+		message "<##FFE100> &l● PandaMenus &8&l⤜ &7 Creating &f""plugins\PandaMenus\config.yml""&7 file!" to console
+		set {-PMenus::debug} to yaml value "debug" from "plugins/PandaMenus/config.yml"
+	else:
+		load yaml "plugins/PandaMenus/config.yml" as "plugins/PandaMenus/config.yml"
+		message "<##FFE100> &l● PandaMenus &8&l⤜ &7 Loading &f""plugins\PandaMenus\config.yml""&7 file!" to console
+		set {-PMenus::debug} to yaml value "debug" from "plugins/PandaMenus/config.yml"
+	if {PandaMenusFirstLoad} is not set:
+		if new File("plugins/PandaMenus/Menus/Example.yml").exists() is false:
+			download file from "https://raw.githubusercontent.com/Mr-Errors/PandaMenus/refs/heads/main/PandaMenus/Configs/Template/Menus/Example.yml" and store it inside "plugins/PandaMenus/Menus/Example.yml"
+			wait 2 ticks
+			load yaml "plugins/PandaMenus/Menus/Example.yml" as "plugins/PandaMenus/Menus/Example.yml"
+			save yaml "plugins/PandaMenus/Menus/Example.yml"
+			message "<##FFE100> &l● PandaMenus &8&l⤜ &7 Creating Menu &f""plugins\PandaMenus\Menus\Example.yml""&7 file!" to console
+
+		if new File("plugins/PandaMenus/Categories/Example/Example-Category.yml").exists() is false:
+			download file from "https://raw.githubusercontent.com/Mr-Errors/PandaMenus/refs/heads/main/PandaMenus/Configs/Template/Menus/Example.yml" and store it inside "plugins/PandaMenus/Categories/Example/Example-Category.yml"
+			wait 2 ticks
+			load yaml "plugins/PandaMenus/Categories/Example/Example-Category.yml" as "plugins/PandaMenus/Categories/Example/Example-Category.yml"
+			save yaml "plugins/PandaMenus/Categories/Example/Example-Category.yml"
+			message "<##FFE100> &l● PandaMenus &8&l⤜ &7 Creating Categories &f""plugins\PandaMenus\Categories\Example\Example-Category.yml""&7 file!" to console
+
+	set {_menuFiles::*} to getAllFiles("plugins/PandaMenus/Menus/")
+	loop {_menuFiles::*}:
+		set {_file} to "%loop-value%"
+		load yaml {_file} as {_file}
+		pmenuLoadInventory({_file})
+		message "<##FFE100> &l● PandaMenus &8&l⤜ &7 Loading Menu &f""%{_file}%""&7 file!" to console
+
+	set {_categoriesFiles::*} to getAllFiles("plugins/PandaMenus/Categories/")
+	loop {_categoriesFiles::*}:
+		set {_file} to "%loop-value%"
+		load yaml {_file} as {_file}
+		pmenuLoadInventory({_file})
+		message "<##FFE100> &l● PandaMenus &8&l⤜ &7 Loading Category &f""%{_file}%""&7 file!" to console
