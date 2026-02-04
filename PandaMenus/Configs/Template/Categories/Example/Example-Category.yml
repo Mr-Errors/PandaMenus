@@ -1,0 +1,180 @@
+# Example PandaMenus Configuration
+Menu:
+  id: example/example-category
+  title: "&8Example Category &f<current_page>&8/&f<max_pages>"
+  shape:
+    - '---------'
+    - '-abcdefg-'
+    - '-hijklmn-'
+    - '?--<->---'
+  filler-items:
+    - slot: '-'
+      material: minecraft:black_stained_glass_pane
+      hide_tooltip: true
+    - slot: '?'
+      material: minecraft:chest
+      name: "&6Example Category"
+      lore:
+        - "&7Click to open example category"
+      actions:
+        right-click:
+          - "[OPEN_MENU] example"
+          - "[MESSAGE] right click"
+        left-click:
+          - "[OPEN_MENU] example"
+          - "[MESSAGE] left click"
+      
+  pagination:
+    slots: ["a","b","c","d","e","f","g","h","i","j","k","l","m","n"]
+    next-page:
+      available:
+        - slot: ">"
+          material: minecraft:tipped_arrow
+          name: "&aNext Page"
+          color: # RGB Color
+          - 150
+          - 255
+          - 0
+          lore:
+            - "&7Click to open example category"
+      unavailable:
+        - slot: ">"
+          material: minecraft:black_stained_glass_pane
+    previous-page:
+      available:
+        - slot: "<"
+          material: minecraft:tipped_arrow
+          name: "&cPrevious Page"
+          color: # RGB Color
+          - 255
+          - 50
+          - 50
+          lore:
+            - "&7Click to open example category"
+      unavailable:
+        - slot: "<"
+          material: minecraft:black_stained_glass_pane
+    items:
+      - material: minecraft:stone
+        name: "&7Test 1"
+        lore:
+          - "&7Test 1"
+      - material: minecraft:stone
+        name: "&7Test 2"
+        lore:
+          - "&7Test 2"
+      - material: minecraft:stone
+        name: "&7Test 3"
+        lore:
+          - "&7Test 3"
+      - material: minecraft:stone
+        name: "&7Test 4"
+        lore:
+          - "&7Test 4"
+      - material: minecraft:stone
+        name: "&7Test 5"
+        lore:
+          - "&7Test 5"
+      - material: minecraft:stone
+        name: "&7Test 6"
+        lore:
+          - "&7Test 6"
+      - material: minecraft:stone
+        name: "&7Test 7"
+        lore:
+          - "&7Test 7"
+      - material: minecraft:stone
+        name: "&7Test 8"
+        lore:
+          - "&7Test 8"
+      - material: minecraft:stone
+        name: "&7Test 9"
+        lore:
+          - "&7Test 9"
+      - material: minecraft:stone
+        name: "&7Test 10"
+        lore:
+          - "&7Test 10"
+      - material: minecraft:stone
+        name: "&7Test 11"
+        lore:
+          - "&7Test 11"
+      - material: minecraft:stone
+        name: "&7Test 12"
+        lore:
+          - "&7Test 12"
+      - material: minecraft:stone
+        name: "&7Test 13"
+        lore:
+          - "&7Test 13"
+      - material: minecraft:stone
+        name: "&7Test 14"
+        lore:
+          - "&7Test 14"
+      - material: minecraft:stone
+        name: "&7Test 15"
+        lore:
+          - "&7Test 15"
+      - material: minecraft:stone
+        name: "&7Test 16"
+        lore:
+          - "&7Test 16"
+      - material: minecraft:stone
+        name: "&7Test 17"
+        lore:
+          - "&7Test 17"
+      - material: minecraft:stone
+        name: "&7Test 18"
+        lore:
+          - "&7Test 18"
+      - material: minecraft:stone
+        name: "&7Test 19"
+        lore:
+          - "&7Test 19"
+      - material: minecraft:stone
+        name: "&7Test 20"
+        lore:
+          - "&7Test 20"
+      - material: minecraft:stone
+        name: "&7Test 21"
+        lore:
+          - "&7Test 21"
+      - material: minecraft:stone
+        name: "&7Test 22"
+        lore:
+          - "&7Test 22"
+      - material: minecraft:stone
+        name: "&7Test 23"
+        lore:
+          - "&7Test 23"
+      - material: minecraft:stone
+        name: "&7Test 24"
+        lore:
+          - "&7Test 24"
+      - material: minecraft:stone
+        name: "&7Test 25"
+        lore:
+          - "&7Test 25"
+      - material: minecraft:stone
+        name: "&7Test 26"
+        lore:
+          - "&7Test 26"
+      - material: minecraft:stone
+        name: "&7Test 27"
+        lore:
+          - "&7Test 27"
+      - material: minecraft:stone
+        name: "&7Test 28"
+        lore:
+          - "&7Test 28"
+      - material: minecraft:stone
+        name: "&7Test 29"
+        lore:
+          - "&7Test 29"
+      - material: minecraft:stone
+        name: "&7Test 30"
+        lore:
+          - "&7Test 30"
+    
+
+

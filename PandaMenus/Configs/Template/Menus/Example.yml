@@ -1,0 +1,48 @@
+# Example PandaMenus Configuration
+Menu:
+  id: example
+  title: "&8Example Menu"
+  shape:
+    - '---------'
+    - '-!-@-#-%-'
+    - '---------'
+    - '-abcdefg-'
+    - '-hijklmn-'
+    - '---------'
+  filler-items:
+    - slot: '-'
+      material: minecraft:black_stained_glass_pane
+    - slot: '!'
+      material: minecraft:chest
+      name: "&6Example Category"
+      lore:
+        - "&7Click to open example category"
+      actions:
+        any:
+          - "[OPEN_CATEGORY] example/example-category"
+    - slot: '@'
+      material: minecraft:chest
+      name: "&6Example Category"
+      lore:
+        - "&7Click to open example category"
+      actions:
+        any:
+          - "[OPEN_CATEGORY] example/example-category"
+    - slot: '#'
+      material: minecraft:chest
+      name: "&6Example Category"
+      lore:
+        - "&7Click to open example category"
+      actions:
+        any:
+          - "[OPEN_CATEGORY] example/example-category"
+
+    - slot: '%'
+      material: minecraft:chest
+      name: "&6Example Category"
+      lore:
+        - "&7Click to open example category"
+      actions:
+        any:
+          - "[OPEN_CATEGORY] example/example-category"
+
