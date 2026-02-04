@@ -1,0 +1,143 @@
+#--------------------------------------------------------------------------------------#
+#██████╗░░█████╗░███╗░░██╗██████╗░░█████╗░███╗░░░███╗███████╗███╗░░██╗██╗░░░██╗░██████╗#
+#██╔══██╗██╔══██╗████╗░██║██╔══██╗██╔══██╗████╗░████║██╔════╝████╗░██║██║░░░██║██╔════╝#
+#██████╔╝███████║██╔██╗██║██║░░██║███████║██╔████╔██║█████╗░░██╔██╗██║██║░░░██║╚█████╗░#
+#██╔═══╝░██╔══██║██║╚████║██║░░██║██╔══██║██║╚██╔╝██║██╔══╝░░██║╚████║██║░░░██║░╚═══██╗#
+#██║░░░░░██║░░██║██║░╚███║██████╔╝██║░░██║██║░╚═╝░██║███████╗██║░╚███║╚██████╔╝██████╔╝#
+#╚═╝░░░░░╚═╝░░╚═╝╚═╝░░╚══╝╚═════╝░╚═╝░░╚═╝╚═╝░░░░░╚═╝╚══════╝╚═╝░░╚══╝░╚═════╝░╚═════╝░#
+#--------------------------------------------------------------------------------------#
+#|================================================|#
+#|					INFORMATION					  |#
+#|================================================|#
+# Script Author: 
+# - MrErrors
+#
+# Script Version: 
+# - 1.0.1
+#-------------------------------------------------------#
+#██╗███╗░░░███╗██████╗░░█████╗░██████╗░████████╗░██████╗#
+#██║████╗░████║██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔════╝#
+#██║██╔████╔██║██████╔╝██║░░██║██████╔╝░░░██║░░░╚█████╗░#
+#██║██║╚██╔╝██║██╔═══╝░██║░░██║██╔══██╗░░░██║░░░░╚═══██╗#
+#██║██║░╚═╝░██║██║░░░░░╚█████╔╝██║░░██║░░░██║░░░██████╔╝#
+#╚═╝╚═╝░░░░░╚═╝╚═╝░░░░░░╚════╝░╚═╝░░╚═╝░░░╚═╝░░░╚═════╝░#
+#-------------------------------------------------------#
+using queues
+using for loop
+import:
+	java.io.File
+
+#--------------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------#
+#███████╗██╗░░░██╗███╗░░██╗░█████╗░████████╗██╗░█████╗░███╗░░██╗░██████╗#
+#██╔════╝██║░░░██║████╗░██║██╔══██╗╚══██╔══╝██║██╔══██╗████╗░██║██╔════╝#
+#█████╗░░██║░░░██║██╔██╗██║██║░░╚═╝░░░██║░░░██║██║░░██║██╔██╗██║╚█████╗░#
+#██╔══╝░░██║░░░██║██║╚████║██║░░██╗░░░██║░░░██║██║░░██║██║╚████║░╚═══██╗#
+#██║░░░░░╚██████╔╝██║░╚███║╚█████╔╝░░░██║░░░██║╚█████╔╝██║░╚███║██████╔╝#
+#╚═╝░░░░░░╚═════╝░╚═╝░░╚══╝░╚════╝░░░░╚═╝░░░╚═╝░╚════╝░╚═╝░░╚══╝╚═════╝░#
+#-----------------------------------------------------------------------#
+function getAllFiles(path:string) :: objects:
+	set {_directory} to new File({_path})
+	if {_directory}.isDirectory() is false:
+		stop
+	set {_files} to a queue of ...{_directory}.listFiles()
+	while size of {_files} > 0:
+		set {_file} to next element in {_files}
+		if {_file}.isDirectory() is true:
+			for {_newFile} in ...{_file}.listFiles():
+				add {_newFile} to end of {_files}
+			continue
+		set {_files::%loop-counter%} to {_file}
+	return {_files::*}
+#--------------------------------------------------------------------------------------#
+function registerActionType(id:string, prefix:string, executions:strings):
+    set {-actiontypes::%{_id}%} to pmenu_actiontype struct instance:
+        prefix: {_prefix}
+        executions: {_executions::*}
+#--------------------------------------------------------------------------------------#
+function parseMenuAction(player:player, action: string):
+    replace "<player>" in {_action} with name of {_player}
+    loop {-actiontypes::*}:
+        {_action} starts with (loop-value->prefix)
+        set {_executions::*} to (loop-value->executions)
+        set {_input} to subtext of {_action} from ((length of (loop-value->prefix))+2) to length of {_action}
+        parse effect {_executions::*}
+#--------------------------------------------------------------------------------------#
+function pmenusDebug(msg: string):
+	if {-PMenus::debug} is true:
+		message {_msg} to all players where [input has permission "pandamenus.debug"] and console
+#--------------------------------------------------------------------------------------#
+function quickItemStructReturn(path: string, yaml: string) :: pmenu_itemData structs:
+	loop yaml list {_path} of {_yaml}:
+		set {_items::%loop-value%} to PMenus_ItemBuilder(loop-value)
+	return {_items::*}
+#--------------------------------------------------------------------------------------#
+function quickClickActionStructReturn(clickActions: object) :: pmenu_actions struct:
+	if {_clickActions}.containsKey("left-click"):
+		set {_lacts::*} to ...{_clickActions}.get("left-click").toArray()
+		set {_actions::left-click} to pmenu_clickAction struct instance with initial values:
+			clickType: left mouse button
+			actions: {_lacts::*}
+	if {_clickActions}.containsKey("right-click"):
+		set {_racts::*} to ...{_clickActions}.get("right-click").toArray()
+		set {_actions::right-click} to pmenu_clickAction struct instance with initial values:
+			clickType: right mouse button
+			actions: {_lacts::*}
+	if {_clickActions}.containsKey("any"):
+		set {_anyacts::*} to ...{_clickActions}.get("any").toArray()
+		set {_actions::any} to pmenu_clickAction struct instance with initial values:
+			actions: {_anyacts::*}
+	return pmenu_actions struct instance with initial values:
+		types: {_actions::*}
+#--------------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------#
+#░█████╗░░█████╗░███╗░░░███╗███╗░░░███╗░█████╗░███╗░░██╗██████╗░░██████╗#
+#██╔══██╗██╔══██╗████╗░████║████╗░████║██╔══██╗████╗░██║██╔══██╗██╔════╝#
+#██║░░╚═╝██║░░██║██╔████╔██║██╔████╔██║███████║██╔██╗██║██║░░██║╚█████╗░#
+#██║░░██╗██║░░██║██║╚██╔╝██║██║╚██╔╝██║██╔══██║██║╚████║██║░░██║░╚═══██╗#
+#╚█████╔╝╚█████╔╝██║░╚═╝░██║██║░╚═╝░██║██║░░██║██║░╚███║██████╔╝██████╔╝#
+#░╚════╝░░╚════╝░╚═╝░░░░░╚═╝╚═╝░░░░░╚═╝╚═╝░░╚═╝╚═╝░░╚══╝╚═════╝░╚═════╝░#
+#-----------------------------------------------------------------------#
+command /pmenu [<string>] [<id:string>] [<offline player>]:
+	permission: pandamenus.command.use
+	permission message: "<##FFE100> &l● PMenus &8&l⤜ &cYou dont have permissions to use that command!"
+	aliases: /pandamenus, /pandamenu, /pmenus, /pms
+	trigger:
+		if arg-1 is "admin":
+			if player has permission "pandamenus.admin.use":
+				if arg-2 is "reload":
+					if player has permission "pandamenus.admin.reload":
+						make player execute command "sk reload /PandaMenus/"
+					else:
+						message "<##FFE100> &l● PMenus &8&l⤜ &fUnknow command please type /pms help!" to player
+			else:
+				message "<##FFE100> &l● PMenus &8&l⤜ &fUnknow command please type /pms help!" to player
+		else if arg-1 is "open" or "Open":
+
+			if {-PMenus::data::inventorys::%{_id}%} isn't set:
+				send "<##FFE100> &l● PMenus &8&l⤜ &f%{_id}% &cisn't a menu that doesn't exist" to player
+				stop
+			if arg-3 is a offline player:
+				set {_p} to arg-3
+			else:
+				set {_p} to player
+			open ({-PMenus::data::inventorys::%{_id}%}->gui) to {_p}
+
+#--------------------------------------------------------------------------------#
+on tab complete:
+	if event-player has permission "pandamenus.admin.use":
+		if event-string contains "/pmenu", "/pandamenus", "/pandamenu", "/pmenus" or "/pms":
+			set tab completions for position 1 to "open"
+			if event-player has permission "pandamenus.admin.reload":
+				set tab completions for position 1 to "open" and "admin"
+			if tab arg-1 = "admin":
+				set tab completions for position 2 to "reload"
+			else if tab arg-1 = "open":
+				set tab completions for position 2 to (indices of {-PMenus::data::inventorys::*})
+				
+	else if event-player has permission "pandamenus.command.use":
+		if event-string contains "/pmenu", "/pandamenus", "/pandamenu", "/pmenus" or "/pms":
+			set tab completions for position 1 to "open" and "help"
+			if tab arg-1 = "open":
+				set tab completions for position 2 to (indices of {-PMenus::data::inventorys::*})
+

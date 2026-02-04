@@ -1,0 +1,194 @@
+#--------------------------------------------------------------------------------------#
+#██████╗░░█████╗░███╗░░██╗██████╗░░█████╗░███╗░░░███╗███████╗███╗░░██╗██╗░░░██╗░██████╗#
+#██╔══██╗██╔══██╗████╗░██║██╔══██╗██╔══██╗████╗░████║██╔════╝████╗░██║██║░░░██║██╔════╝#
+#██████╔╝███████║██╔██╗██║██║░░██║███████║██╔████╔██║█████╗░░██╔██╗██║██║░░░██║╚█████╗░#
+#██╔═══╝░██╔══██║██║╚████║██║░░██║██╔══██║██║╚██╔╝██║██╔══╝░░██║╚████║██║░░░██║░╚═══██╗#
+#██║░░░░░██║░░██║██║░╚███║██████╔╝██║░░██║██║░╚═╝░██║███████╗██║░╚███║╚██████╔╝██████╔╝#
+#╚═╝░░░░░╚═╝░░╚═╝╚═╝░░╚══╝╚═════╝░╚═╝░░╚═╝╚═╝░░░░░╚═╝╚══════╝╚═╝░░╚══╝░╚═════╝░╚═════╝░#
+#--------------------------------------------------------------------------------------#
+#|================================================|#
+#|					INFORMATION					  |#
+#|================================================|#
+# Script Author: 
+# - MrErrors
+#
+# Script Version: 
+# - 1.0.1
+#-------------------------------------------------------#
+#██╗███╗░░░███╗██████╗░░█████╗░██████╗░████████╗░██████╗#
+#██║████╗░████║██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔════╝#
+#██║██╔████╔██║██████╔╝██║░░██║██████╔╝░░░██║░░░╚█████╗░#
+#██║██║╚██╔╝██║██╔═══╝░██║░░██║██╔══██╗░░░██║░░░░╚═══██╗#
+#██║██║░╚═╝░██║██║░░░░░╚█████╔╝██║░░██║░░░██║░░░██████╔╝#
+#╚═╝╚═╝░░░░░╚═╝╚═╝░░░░░░╚════╝░╚═╝░░╚═╝░░░╚═╝░░░╚═════╝░#
+#-------------------------------------------------------#
+import:
+	java.io.File # used to get the data file or config file
+	java.util.HashMap
+
+
+
+#-----------------------------------------------------------------------#
+#███████╗██╗░░░██╗███╗░░██╗░█████╗░████████╗██╗░█████╗░███╗░░██╗░██████╗#
+#██╔════╝██║░░░██║████╗░██║██╔══██╗╚══██╔══╝██║██╔══██╗████╗░██║██╔════╝#
+#█████╗░░██║░░░██║██╔██╗██║██║░░╚═╝░░░██║░░░██║██║░░██║██╔██╗██║╚█████╗░#
+#██╔══╝░░██║░░░██║██║╚████║██║░░██╗░░░██║░░░██║██║░░██║██║╚████║░╚═══██╗#
+#██║░░░░░╚██████╔╝██║░╚███║╚█████╔╝░░░██║░░░██║╚█████╔╝██║░╚███║██████╔╝#
+#╚═╝░░░░░░╚═════╝░╚═╝░░╚══╝░╚════╝░░░░╚═╝░░░╚═╝░╚════╝░╚═╝░░╚══╝╚═════╝░#
+#-----------------------------------------------------------------------#
+function pmenuLoadInventory(yaml: string):
+	set {_id} to pmenu id of {_yaml}
+	set {_shape::*} to pmenu shape of {_yaml}
+	set {_title} to pmenu title of {_yaml}
+
+	if yaml path "Menu.pagination" in {_yaml} exists:
+		set {_pageData} to pmenuCreatePagination({_id}, {_yaml})
+
+	loop yaml list "Menu.filler-items" of {_yaml}:
+		set {_items::%loop-value%} to PMenus_ItemBuilder(loop-value)
+	set {-PMenus::data::inventorys::%{_id}%} to pmenu_data struct instance with initial values:
+		id: {_id}
+		yaml: {_yaml}
+		shape: {_shape::*}
+		title: {_title}
+		pagination: {_pageData}
+		fillerItems: {_items::*}
+
+	pmenuCreateInventory({_id})
+#--------------------------------------------------------------------------------#
+local function pmenuCreatePagination(id: string, yaml: string) :: pmenu_pagationData struct:
+	set {_pSlots::*} to yaml list "Menu.pagination.slots" of {_yaml}
+	loop yaml list "Menu.pagination.items" of {_yaml}:
+		set {_pageItems::%loop-counter%} to PMenus_ItemBuilder(loop-value)
+
+	set {_pageItems::*} to quickItemStructReturn("Menu.pagination.items", {_yaml})
+	set {_perPageData::*} to pmenuPerPageData((size of {_pSlots::*}), {_pageItems::*}, {_yaml})
+	return pmenu_pagationData struct instance with initial values:
+		slots: {_pSlots::*}
+		items: {_pageItems::*}
+		maxGenericItems: (size of {_pSlots::*})
+		pageData: {_perPageData::*}
+		page: (first element of {_perPageData::*})
+		maxPages: (size of {_perPageData::*})
+#--------------------------------------------------------------------------------#
+local function pmenuPerPageData(amount: integer, items: structs, yaml: string) :: pmenu_perPageData structs:
+	loop ceil(size of {_items::*} / {_amount}) times:
+		set {_start} to (loop-value -1)*{_amount}
+		set {_end} to {_start}+{_amount}
+		set {_pItems::*} to elements from {_start}+1 to {_end} of {_items::*}
+		set {_structs::%loop-value%} to pmenu_perPageData struct instance with initial values:
+			page: loop-value
+			items: {_pItems::*}
+	return {_structs::*}
+#--------------------------------------------------------------------------------#
+local function pmenuCreateInventory(id: string):
+
+	set {_pagination} to {-PMenus::data::inventorys::%{_id}%}->pagination
+	set {_pageData::*} to {_pagination}->pageData
+
+	set {_shape::*} to {-PMenus::data::inventorys::%{_id}%}->shape
+	set {_filler::*} to {-PMenus::data::inventorys::%{_id}%}->fillerItems
+	set {_title} to {-PMenus::data::inventorys::%{_id}%}->title
+	set {_yaml} to {-PMenus::data::inventorys::%{_id}%}->yaml
+	if {_pagination} is set:
+		loop ({_pagination}->maxPages) times:
+			set {_items::*} to {_pageData::%loop-counter%}->items
+			if (previous loop-value) is set:
+				set {_previousPage} to first element of (quickItemStructReturn("Menu.pagination.previous-page.available", {_yaml}))
+				set {_hasPrevious} to true
+			else:
+				set {_previousPage} to first element of (quickItemStructReturn("Menu.pagination.previous-page.unavailable", {_yaml}))
+
+			if (next loop-value) is set:
+				set {_nextPage} to first element of (quickItemStructReturn("Menu.pagination.next-page.available", {_yaml}))
+				if (loop-counter) < ({_pagination}->maxPages):
+					set {_hasNext} to true
+				else:
+					set {_hasNext} to false
+			else:
+				set {_nextPage} to first element of (quickItemStructReturn("Menu.pagination.next-page.unavailable", {_yaml}))
+
+			set {_t} to {_title}
+			if {_title} contains "<max_pages>" or "<current_page>":
+				replace "<max_pages>" with "%{_pagination}->maxPages%" in {_t}
+				replace "<current_page>" with "%(loop-value)%" in {_t}
+				
+			create a gui with id "%{_id}%_page_%loop-counter%" with virtual chest inventory with (size of {_shape::*}) rows named {_t} with shape {_shape::*}:
+				set {_currentID} to "%{_id}%_page_%loop-counter%"
+				loop {_filler::*}:
+					set {_fs} to (loop-value-2)->slot
+					pmenuFormatSlotItem(gui, loop-value-2, {_fs})
+
+				loop {_items::*}:
+					pmenuFormatSlotItem(gui, loop-value-2)
+
+				if {_hasNext} is true:
+					set ({_nextPage}->nextPage) to "%{_id}%_page_%loop-counter+1%"
+
+				if {_hasPrevious} is true:
+					set ({_previousPage}->previousPage) to "%{_id}%_page_%(loop-counter)-1%"
+
+				pmenuFormatSlotItem(gui, {_nextPage}, ({_nextPage}->slot))
+				pmenuFormatSlotItem(gui, {_previousPage}, ({_previousPage}->slot))
+				
+				if loop-counter = 1:
+					set {_firstGUI} to gui
+				#set {-PMenus::data::ids::%{_currentID}%} to {_currentID}
+
+		set {-PMenus::data::inventorys::%{_id}%}->gui to {_firstGUI}
+	else if {_pagination} isn't set:
+		create a gui with id "%{_id}%" with virtual chest inventory with (size of {_shape::*}) rows named {_title} with shape {_shape::*}:
+			loop {_filler::*}:
+				set {_fs} to (loop-value)->slot
+				pmenuFormatSlotItem(gui, loop-value, {_fs})
+			#set {-PMenus::data::ids::%{_id}%} to {_id}
+			set {-PMenus::data::inventorys::%{_id}%}->gui to gui
+#--------------------------------------------------------------------------------#
+local function pmenuFormatSlotItem(gui: gui inventory, slotItem: struct, slot:string={_null}):
+	edit gui {_gui}:
+		set {_displayItem} to {_slotItem}->displayItem
+		set {_item} to {_slotItem}->item
+		if ({_slotItem}->slot) is set:
+			set {_slot} to ({_slotItem}->slot)
+		if ({_slotItem}->nextPage) is set:
+			format gui slot ({_slot} ? "%next gui slot of gui%") with {_displayItem}:
+				open gui with id ({_slotItem}->nextPage) to player
+
+		else if ({_slotItem}->previousPage) is set:
+			format gui slot ({_slot} ? "%next gui slot of gui%") with {_displayItem}:
+				open gui with id ({_slotItem}->previousPage) to player
+				
+		else if {_slotItem}->actions is set:
+			set {_actions} to {_slotItem}->actions
+			format gui slot ({_slot} ? "%next gui slot of gui%") with {_displayItem}:
+				set {_click} to click type
+				set {_acts::*} to {_actions}->types
+				#broadcast {_acts::*}
+				loop {_acts::*}:
+					set {_type} to loop-value->clickType
+					if {_click} = {_type}:
+						set {_actions::*} to loop-value->actions
+						loop {_actions::*}:
+							set {_ac} to loop-value-2
+							parseMenuAction(player, {_ac})
+					if {_type} is not set:
+						set {_actions::*} to loop-value->actions
+						loop {_actions::*}:
+							set {_ac} to loop-value-2
+							parseMenuAction(player, {_ac})
+				#broadcast {_actions::*}
+
+		else if {_slotItem}->buyPrice and {_slotItem}->sellPrice and {_slotItem}->actions aren't set:
+			format gui slot ({_slot} ? "%next gui slot of gui%") with {_displayItem}:
+				stop
+		else:
+			format gui slot ({_slot} ? "%next gui slot of gui%") with {_displayItem}
+
+#--------------------------------------------------------------------------------#
+
+
+
+
+
+
+
