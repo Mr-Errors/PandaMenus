@@ -41,6 +41,8 @@ on load:
 	registerActionType("command", "[COMMAND]", "execute {_player} command {_input}")
 	registerActionType("console_command", "[CONSOLE_COMMAND]", "execute console command {_input}")
 	registerActionType("message", "[MESSAGE]", "send {_input} to {_player}")
+	registerActionType("open_menu", "[OPEN_MENU]", "open gui with id {_input} to {_player}")
+	registerActionType("open_category", "[OPEN_CATEGORY]", "open gui with id {_input} to {_player}")
 
 #--------------------------------------------------------------------------------------#
 # MythicItem
@@ -108,7 +110,14 @@ condition mythic [item] exists %string%:
 #	check:
 #		return NexoItems.exists({_id})
 #--------------------------------------------------------------------------------------#
-
+#-----------------------------------------------------------------------#
+#███████╗██╗░░░██╗███╗░░██╗░█████╗░████████╗██╗░█████╗░███╗░░██╗░██████╗#
+#██╔════╝██║░░░██║████╗░██║██╔══██╗╚══██╔══╝██║██╔══██╗████╗░██║██╔════╝#
+#█████╗░░██║░░░██║██╔██╗██║██║░░╚═╝░░░██║░░░██║██║░░██║██╔██╗██║╚█████╗░#
+#██╔══╝░░██║░░░██║██║╚████║██║░░██╗░░░██║░░░██║██║░░██║██║╚████║░╚═══██╗#
+#██║░░░░░╚██████╔╝██║░╚███║╚█████╔╝░░░██║░░░██║╚█████╔╝██║░╚███║██████╔╝#
+#╚═╝░░░░░░╚═════╝░╚═╝░░╚══╝░╚════╝░░░░╚═╝░░░╚═╝░╚════╝░╚═╝░░╚══╝╚═════╝░#
+#-----------------------------------------------------------------------#
 function PMenus_ItemBuilder(itemMap: object) :: pmenu_itemData struct:
 	set {_sellPrice} to {_itemMap}.get("sell_cost")
 	set {_buyPrice} to {_itemMap}.get("buy_cost")
@@ -126,9 +135,12 @@ function PMenus_ItemBuilder(itemMap: object) :: pmenu_itemData struct:
 	#	set {_item} to {_itemMap}.get("oraxenitem")
 	#	set {_item} to oraxen item named {_item}
 	else:
-		set {_item} to {_itemMap}.get("item")
+		set {_item} to {_itemMap}.get("material")
 		set {_item} to itemtype from namespaced key {_item}
 	{_item} is set
+
+	if {_itemMap}.containsKey("name"):
+		set name of {_item} to coloured {_itemMap}.get("name")
 
 	if {_itemMap}.containsKey("name"):
 		set name of {_item} to coloured {_itemMap}.get("name")
@@ -139,14 +151,18 @@ function PMenus_ItemBuilder(itemMap: object) :: pmenu_itemData struct:
 	if {_itemMap}.containsKey("amount"):
 		set item amount of {_itemMap} to {_itemMap}.get("amount")
 
+	if {_itemMap}.containsKey("color"):
+		set {_rgb::*} to ...{_itemMap}.get("color").toArray()
+		dye {_item} rgb({_rgb::1}, {_rgb::2}, {_rgb::3})
+
 	if {_itemMap}.containsKey("lore"):
 		set lore of {_item} to coloured ...{_itemMap}.get("lore").toArray()
 
 	if {_itemMap}.containsKey("actions"):
-		set {_actions::*} to {_itemMap}.get("actions")
+		set {_acts} to quickClickActionStructReturn({_itemMap}.get("actions"))
 
-	if {_itemMap}.containsKey("components"):
-		set {_componentNBT} to nbt from {_itemMap}.get("components")
+	if {_itemMap}.containsKey("component_nbt"):
+		set {_componentNBT} to nbt from {_itemMap}.get("component_nbt")
 		add {_componentNBT} to nbt of {_item}
 		
 	if {_itemMap}.containsKey("custom_nbt"):
@@ -157,11 +173,16 @@ function PMenus_ItemBuilder(itemMap: object) :: pmenu_itemData struct:
 		set {_custommodeldata} to {_itemMap}.get("custom_model_data")
 		set custom model data of {_item} to {_custommodeldata}
 		
+	if {_itemMap}.containsKey("hide_tooltip"):
+		if {_itemMap}.get("hide_tooltip") is true:
+			set {_item} to {_item} without tooltip
+		
 
 	return pmenu_itemData struct instance with initial values:
-		displayItem: {_displayItem}
+		displayItem: {_item}
 		item: {_item}
 		slot: {_slot}
 		buyPrice: {_buyPrice}
 		sellPrice: {_sellPrice}
-	
+		actions: {_acts}
+#--------------------------------------------------------------------------------------#
