@@ -1,6 +1,6 @@
 # PandaMenus
 
-PandaMenus is a Minecraft Skript plugin that enables server administrators to create fully customizable menus tailored to their specific needs. While there are currently some limitations—such as the absence of placeholder support—PandaMenus can be thought of as a streamlined alternative to DeluxeMenus, featuring a built-in pagination system for enhanced navigation and user experience.
+PandaMenus is a Minecraft Skript plugin that enables server administrators to create fully customizable menus tailored to their specific needs. While there are currently some limitations—such as the absence of placeholder support. PandaMenus can be thought of as a streamlined alternative to DeluxeMenus, featuring a built-in pagination system for enhanced navigation and user experience.
 
 ## Requirements
 
